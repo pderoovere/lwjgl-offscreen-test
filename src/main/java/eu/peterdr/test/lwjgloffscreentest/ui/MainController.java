@@ -3,17 +3,20 @@ package eu.peterdr.test.lwjgloffscreentest.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.peterdr.test.lwjgloffscreentest.opengl.GLFWWindowManager;
 import eu.peterdr.test.lwjgloffscreentest.opengl.OpenGLExecutor;
 
 public class MainController {
 
     private List<OpenGLExecutor> executors;
+    private MainView view;
 
     public MainController() {
         this.executors = new ArrayList<OpenGLExecutor>();
     }
 
     public void setView(final MainView view) {
+        this.view = view;
         view.setController(this);
         view.build();
     }
@@ -22,6 +25,7 @@ public class MainController {
         OpenGLExecutor executor = new OpenGLExecutor();
         executor.initialize();
         this.executors.add(executor);
+        this.view.setBtnClearAllExecutorsDisabled(false);
     }
 
     public void clickedClearAllExecutors() {
@@ -29,5 +33,12 @@ public class MainController {
             executor.deleteContext();
         }
         this.executors.clear();
+        this.view.setBtnClearAllExecutorsDisabled(true);
+        this.view.setBtnDestroyLWJGLDisabled(false);
+    }
+
+    public void clickedDestroyLWJGL() {
+        GLFWWindowManager.getInstance().destroyLWJGL();
+        this.view.setBtnDestroyLWJGLDisabled(true);
     }
 }

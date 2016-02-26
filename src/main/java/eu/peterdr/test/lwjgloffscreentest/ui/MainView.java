@@ -17,6 +17,7 @@ public class MainView extends GridPane {
     private Label lblMemoryUsed;
     private Button btnAddExecutor;
     private Button btnClearAllExecutors;
+    private Button btnDestroyLWJGL;
 
     public MainView() {
     }
@@ -48,11 +49,25 @@ public class MainView extends GridPane {
         this.btnClearAllExecutors.setOnAction((event) -> {
             this.controller.clickedClearAllExecutors();
         });
-        add(this.lblMemoryUsed, 0, 0, 2, 1);
+        this.btnDestroyLWJGL = new Button("Destory LWJGL");
+        this.btnDestroyLWJGL.setOnAction((event) -> {
+            this.controller.clickedDestroyLWJGL();
+        });
+        this.btnDestroyLWJGL.setDisable(true);
+        add(this.lblMemoryUsed, 0, 0, 3, 1);
         add(this.btnAddExecutor, 0, 1);
         add(this.btnClearAllExecutors, 1, 1);
+        add(this.btnDestroyLWJGL, 2, 1);
         setAlignment(Pos.CENTER);
         setHgap(8);
         setVgap(16);
+    }
+
+    public void setBtnClearAllExecutorsDisabled(final boolean disabled) {
+        this.btnClearAllExecutors.setDisable(disabled);
+    }
+
+    public void setBtnDestroyLWJGLDisabled(final boolean disabled) {
+        this.btnDestroyLWJGL.setDisable(disabled);
     }
 }

@@ -36,7 +36,7 @@ public class OpenGLExecutor {
     }
 
     public void initialize() {
-        this.singleThreadExecutor.submitAction(() -> {
+        this.singleThreadExecutor.submitActionAndWait(() -> {
             this.window = GLFWWindowManager.getInstance().createWindow(1, 1);
             glfwMakeContextCurrent(this.window);
             GL.createCapabilities();
@@ -60,8 +60,7 @@ public class OpenGLExecutor {
     }
 
     public void deleteContext() {
-        this.singleThreadExecutor.submitAction(() -> {
-            glfwMakeContextCurrent(0);
+        this.singleThreadExecutor.submitActionAndWait(() -> {
             GLFWWindowManager.getInstance().destroyWindow(this.window);
             this.buffer = null;
             System.gc();
