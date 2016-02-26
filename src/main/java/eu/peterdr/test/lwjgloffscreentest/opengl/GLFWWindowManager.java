@@ -65,7 +65,7 @@ public class GLFWWindowManager {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }
 
-    public void destroyLWJGL() {
+    public void destroyGLFW() {
         this.singleThreadExecutor.submitActionAndWait(() -> {
             glfwTerminate();
             this.errorCallback.release();

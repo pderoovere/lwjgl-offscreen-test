@@ -34,11 +34,11 @@ public class MainController {
         }
         this.executors.clear();
         this.view.setBtnClearAllExecutorsDisabled(true);
-        this.view.setBtnDestroyLWJGLDisabled(false);
+        this.view.setBtnDestroyGLFWDisabled(false);
     }
 
-    public void clickedDestroyLWJGL() {
-        GLFWWindowManager.getInstance().destroyLWJGL();
-        this.view.setBtnDestroyLWJGLDisabled(true);
+    public void clickedDestroyGLFW() {
+        GLFWWindowManager.getInstance().destroyGLFW();
+        this.view.setBtnDestroyGLFWDisabled(true);
     }
 }
