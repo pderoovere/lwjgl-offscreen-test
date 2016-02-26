@@ -26,6 +26,7 @@ public class OpenGLExecutor {
     private SingleThreadExecutor singleThreadExecutor;
     private long window;
 
+    private int bufferId;
     private FloatBuffer buffer;
 
     private static Logger logger = LogManager.getLogger(OpenGLExecutor.class.getName());
@@ -54,14 +55,16 @@ public class OpenGLExecutor {
 
     private void createBuffer() {
         this.buffer = BufferUtils.createFloatBuffer(OpenGLUtils.ARRAY_BUFFER_LENGTH);
-        int bufferId = OpenGLUtils.createArrayBuffer(this.buffer);
-        logger.debug("Created buffer with id: " + bufferId);
+        this.bufferId = OpenGLUtils.createArrayBuffer(this.buffer);
+        logger.debug("Created buffer with id: " + this.bufferId);
     }
 
     public void deleteContext() {
-        glfwMakeContextCurrent(0);
-        GLFWWindowManager.getInstance().destroyWindow(this.window);
-        this.buffer = null;
-        System.gc();
+        this.singleThreadExecutor.submitAction(() -> {
+            glfwMakeContextCurrent(0);
+            GLFWWindowManager.getInstance().destroyWindow(this.window);
+            this.buffer = null;
+            System.gc();
+        });
     }
 }
