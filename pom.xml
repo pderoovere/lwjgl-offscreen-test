@@ -67,7 +67,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>eu.peterdr.test.lwjgloffscreentest.opengl</mainClass>
+							<mainClass>eu.peterdr.test.lwjgloffscreentest.ui.Application2</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>.</Class-Path>

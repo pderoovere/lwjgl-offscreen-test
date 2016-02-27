@@ -61,4 +61,8 @@ public class SingleThreadExecutor {
             e.printStackTrace();
         }
     }
+
+    public void shutdown() {
+        this.actionQueue.shutdownNow();
+    }
 }

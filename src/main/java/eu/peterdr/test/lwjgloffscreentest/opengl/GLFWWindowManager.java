@@ -69,8 +69,9 @@ public class GLFWWindowManager {
         this.singleThreadExecutor.submitActionAndWait(() -> {
             glfwTerminate();
             this.errorCallback.release();
-            instance = null;
         });
+        this.singleThreadExecutor.shutdown();
+        instance = null;
     }
 
     public long createWindow(final int width, final int height) {

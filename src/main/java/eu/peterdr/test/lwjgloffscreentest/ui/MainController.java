@@ -26,6 +26,7 @@ public class MainController {
         executor.initialize();
         this.executors.add(executor);
         this.view.setBtnClearAllExecutorsDisabled(false);
+        this.view.setBtnDestroyGLFWDisabled(true);
     }
 
     public void clickedClearAllExecutors() {
@@ -38,6 +39,10 @@ public class MainController {
     }
 
     public void clickedDestroyGLFW() {
+        for (OpenGLExecutor executor : this.executors) {
+            executor.deleteContext();
+        }
+        this.executors.clear();
         GLFWWindowManager.getInstance().destroyGLFW();
         this.view.setBtnDestroyGLFWDisabled(true);
     }

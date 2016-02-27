@@ -13,8 +13,6 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 import java.nio.FloatBuffer;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 
@@ -29,8 +27,6 @@ public class OpenGLExecutor {
     private int bufferId;
     private FloatBuffer buffer;
 
-    private static Logger logger = LogManager.getLogger(OpenGLExecutor.class.getName());
-
     public OpenGLExecutor() {
         this.singleThreadExecutor = new SingleThreadExecutor();
     }
@@ -38,11 +34,22 @@ public class OpenGLExecutor {
     public void initialize() {
         this.singleThreadExecutor.submitActionAndWait(() -> {
             this.window = GLFWWindowManager.getInstance().createWindow(1, 1);
-            glfwMakeContextCurrent(this.window);
-            GL.createCapabilities();
-            setUpOpenGLOptions();
-            createBuffer();
+            setUpContext();
         });
+    }
+
+    public void initialize(final long window) {
+        this.window = window;
+        this.singleThreadExecutor.submitActionAndWait(() -> {
+            setUpContext();
+        });
+    }
+
+    private void setUpContext() {
+        glfwMakeContextCurrent(this.window);
+        GL.createCapabilities();
+        setUpOpenGLOptions();
+        createBuffer();
     }
 
     private void setUpOpenGLOptions() {
@@ -56,14 +63,28 @@ public class OpenGLExecutor {
     private void createBuffer() {
         this.buffer = BufferUtils.createFloatBuffer(OpenGLUtils.ARRAY_BUFFER_LENGTH);
         this.bufferId = OpenGLUtils.createArrayBuffer(this.buffer);
-        logger.debug("Created buffer with id: " + this.bufferId);
     }
 
     public void deleteContext() {
         this.singleThreadExecutor.submitActionAndWait(() -> {
-            GLFWWindowManager.getInstance().destroyWindow(this.window);
             this.buffer = null;
-            System.gc();
+            GLFWWindowManager.getInstance().destroyWindow(this.window);
+        });
+        shutDownThreadExecutor();
+    }
+
+    public void shutDownThreadExecutor() {
+        this.singleThreadExecutor.shutdown();
+    }
+
+    public long getWindow() {
+        return this.window;
+    }
+
+    public void clearBuffer() {
+        this.singleThreadExecutor.submitActionAndWait(() -> {
+            OpenGLUtils.deleteBuffer(this.bufferId);
+            this.buffer = null;
         });
     }
 }
