@@ -43,49 +43,63 @@ public class Application2 {
         alive = true;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter 'add' to add executor.");
+        System.out.println("Enter 'add XX' to add XX executors.");
         System.out.println("Enter 'clear' to clear executors.");
         System.out.println("Enter 'destroy' to distroy GLFW.");
         System.out.println("Enter 'exit' to distroy GLFW.");
         while (alive) {
-            String input = scanner.next();
+            String input = scanner.nextLine();
             parseInput(input);
         }
         scanner.close();
     }
 
     private static void parseInput(final String input) {
-        switch (input) {
-        case "add":
-            System.out.println("About to add executor");
-            addExecutor();
-            System.out.println("Added executor");
-            break;
-        case "clear":
-            System.out.println("About to clear executors");
-            clearExecutors();
-            System.out.println("Executors cleared");
-            break;
-        case "destroy":
-            System.out.println("About to destroy GLFW");
-            destroyGLFW();
-            System.out.println("GLFW destroyed");
-            break;
-        case "exit":
-            System.out.println("About to exit");
-            exit();
-            break;
-        default:
-            System.out.println("Unknown input, please try again");
+        if (input.startsWith("add")) {
+            String[] words = input.split("\\s+");
+            if (words.length > 1) {
+                try {
+                    int amount = Integer.parseInt(words[1]);
+                    addExecutors(amount);
+                } catch (Exception e) {
+                    System.out.println("Invalid amount");
+                }
+            } else {
+                addExecutors(1);
+            }
+        } else {
+            switch (input) {
+            case "clear":
+                System.out.println("About to clear executors");
+                clearExecutors();
+                System.out.println("Executors cleared");
+                break;
+            case "destroy":
+                System.out.println("About to destroy GLFW");
+                destroyGLFW();
+                System.out.println("GLFW destroyed");
+                break;
+            case "exit":
+                System.out.println("About to exit");
+                exit();
+                break;
+            default:
+                System.out.println("Unknown input, please try again");
+            }
         }
     }
 
-    private static void addExecutor() {
+    private static void addExecutors(final int amount) {
         if (!glfwInitialized) {
             initializeGLFW();
         }
-        OpenGLExecutor executor = new OpenGLExecutor();
-        executor.initialize(createWindow());
-        executors.add(executor);
+        for (int i = 0; i < amount; i++) {
+            System.out.println("About to add executor");
+            OpenGLExecutor executor = new OpenGLExecutor();
+            executor.initialize(createWindow());
+            executors.add(executor);
+            System.out.println("Added executor");
+        }
     }
 
     private static long createWindow() {
@@ -99,6 +113,7 @@ public class Application2 {
     private static void clearExecutors() {
         for (OpenGLExecutor executor : executors) {
             executor.clearBuffer();
+            executor.setContextToNull();
             glfwDestroyWindow(executor.getWindow());
             executor.shutDownThreadExecutor();
         }

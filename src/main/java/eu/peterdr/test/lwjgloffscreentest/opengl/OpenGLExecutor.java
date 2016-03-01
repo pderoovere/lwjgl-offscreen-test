@@ -1,5 +1,6 @@
 package eu.peterdr.test.lwjgloffscreentest.opengl;
 
+import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
@@ -15,6 +16,7 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryUtil;
 
 import eu.peterdr.test.lwjgloffscreentest.util.OpenGLUtils;
 import eu.peterdr.test.lwjgloffscreentest.util.SingleThreadExecutor;
@@ -65,20 +67,17 @@ public class OpenGLExecutor {
         this.bufferId = OpenGLUtils.createArrayBuffer(this.buffer);
     }
 
+    public long getWindow() {
+        return this.window;
+    }
+
     public void deleteContext() {
+        clearBuffer();
+        setContextToNull();
         this.singleThreadExecutor.submitActionAndWait(() -> {
-            this.buffer = null;
             GLFWWindowManager.getInstance().destroyWindow(this.window);
         });
         shutDownThreadExecutor();
-    }
-
-    public void shutDownThreadExecutor() {
-        this.singleThreadExecutor.shutdown();
-    }
-
-    public long getWindow() {
-        return this.window;
     }
 
     public void clearBuffer() {
@@ -86,5 +85,17 @@ public class OpenGLExecutor {
             OpenGLUtils.deleteBuffer(this.bufferId);
             this.buffer = null;
         });
+    }
+
+    public void setContextToNull() {
+        this.singleThreadExecutor.submitActionAndWait(() -> {
+            System.out.println("About to set current context to null, current context: " + glfwGetCurrentContext());
+            glfwMakeContextCurrent(MemoryUtil.NULL);
+            System.out.println("Context set to null, current context: " + glfwGetCurrentContext());
+        });
+    }
+
+    public void shutDownThreadExecutor() {
+        this.singleThreadExecutor.shutdown();
     }
 }
